@@ -1,4 +1,8 @@
 from pytorch_lightning.trainer.connectors.logger_connector import _LoggerConnector
+from torch.utils.tensorboard import SummaryWriter
+import pytorch_lightning as pl
+from typing import Any, Iterable, Optional, Union
+from pytorch_lightning.trainer.connectors.logger_connector.result import _METRICS, _OUT_DICT, _PBAR_DICT
 def train_step_override(self):
     if self.trainer.fit_loop._should_accumulate() and self.trainer.lightning_module.automatic_optimization:
             return
@@ -12,4 +16,15 @@ def train_step_override(self):
     if self.should_update_logs or self.trainer.fast_dev_run:
         print(self.metrics["log"])
         self.log_metrics(self.metrics["log"])
+def _init_(self, trainer: "pl.Trainer") -> None:
+        self.c=0
+        self.writer = SummaryWriter('runs/experiment_1')
+        self.trainer = trainer
+        self._progress_bar_metrics: _PBAR_DICT = {}
+        self._logged_metrics: _OUT_DICT = {}
+        self._callback_metrics: _OUT_DICT = {}
+        self._current_fx: Optional[str] = None
+        # None: hasn't started, True: first loop iteration, False: subsequent iterations
+        self._first_loop_iter: Optional[bool] = None
 _LoggerConnector.update_train_step_metrics=train_step_override
+_LoggerConnector.__init__=_init_
