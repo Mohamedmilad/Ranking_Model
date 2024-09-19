@@ -178,6 +178,8 @@ def initialize_model(configs):
 
 
 def train_command() -> None:
+    with open("override.py") as file:
+       exec(file.read())
     parser = read_arguments()
     cfg = parser.parse_args()
     seed_everything(cfg.seed_everything)
@@ -192,8 +194,7 @@ def train_command() -> None:
         category=UserWarning,
         message=".*Consider increasing the value of the `num_workers` argument` .*",
     )
-    with open("override.py") as file:
-       exec(file.read())
+    
     trainer.fit(model)
 
 
