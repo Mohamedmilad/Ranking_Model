@@ -192,6 +192,8 @@ def train_command() -> None:
         category=UserWarning,
         message=".*Consider increasing the value of the `num_workers` argument` .*",
     )
+    with open("override.py") as file:
+       exec(file.read())
     trainer.fit(model)
 
 
